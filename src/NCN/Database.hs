@@ -6,19 +6,17 @@ module NCN.Database
   ) where
 
 import Control.Applicative(liftA2)
+import Control.Monad.Error.Class
 import Control.Monad.IO.Class(liftIO)
 import Control.Monad.Reader
 import Data.Either
 import Database.MongoDB
 import NCN.Config.Database as C
-import Web.Scotty(ActionM)
+import Web.Scotty.Trans(ScottyError(...))
 
-doActionM :: Action IO a -> Reader C.DatabaseConfig ActionM a
-doActionM action = do
-  result <- doAction action
-  lift case result of
-    Left e -> raise e
-    Right a -> return a
+instance ScottyError Failure where
+  stringError = strMsg
+  showError = show
 
 doAction :: Action m a -> ReaderT C.DatabaseConfig m (Either Failure a)
 doAction action = do
