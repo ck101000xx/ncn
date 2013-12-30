@@ -23,12 +23,11 @@ doAction action = do
   hostPort <- asks $ readHostPort . (liftA2 (++)  C.host ((':':) . C.port))
   db <- asks C.database
   up <- asks $ liftA2 (,) C.user C.pass
-  lift $ do
-    lift $ do
-      pipe <- runIOE $ connect hostPort
-      result <- access pipe master db ((uncurry auth up) >> action)
-      close pipe
-    ErrorT result
+  lift . ErrorT $ do
+    pipe <- runIOE $ connect hostPort
+    result <- access pipe master db ((uncurry auth up) >> action)
+    close pipe
+    return result
 
 tokens = "tokens"
 users = "users"
