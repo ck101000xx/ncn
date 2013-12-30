@@ -24,10 +24,11 @@ doAction action = do
   db <- asks C.database
   up <- asks $ liftA2 (,) C.user C.pass
   lift $ do
-    pipe <- runIOE $ connect hostPort
-    result <- access pipe master db ((uncurry auth up) >> action)
-    close pipe
-    return $ ErrorT result
+    lift $ do
+      pipe <- runIOE $ connect hostPort
+      result <- access pipe master db ((uncurry auth up) >> action)
+      close pipe
+    ErrorT result
 
 tokens = "tokens"
 users = "users"
