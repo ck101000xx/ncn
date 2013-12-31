@@ -18,12 +18,15 @@ instance ScottyError Failure where
   stringError = strMsg
   showError = show
 
-doAction :: Action m a -> ReaderT C.DatabaseConfig (ErrorT Failure m) a
+toActionT :: EitherT e m a -> ActionT e m a
+toActionT = eitherT (\e -> raise a) (\a -> return a) . fmap return
+
+doAction :: Action m a -> ReaderT C.DatabaseConfig (EitherT Failure m) a
 doAction action = do
   hostPort <- asks $ readHostPort . (liftA2 (++)  C.host ((':':) . C.port))
   db <- asks C.database
   up <- asks $ liftA2 (,) C.user C.pass
-  lift . ErrorT $ do
+  lift . EitherT $ do
     pipe <- runIOE $ connect hostPort
     result <- access pipe master db ((uncurry auth up) >> action)
     close pipe
