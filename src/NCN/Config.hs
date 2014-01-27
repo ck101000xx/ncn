@@ -1,13 +1,8 @@
-{-# LANGUAGE OverloadedStrings #-}
-module NCN.Config
-  ( decodeFile
-  , Config
-  , ServerConfig
-  ) where
+{-# LANGUAGE TemplateHaskell #-}
+module NCN.Config where
 
-import Control.Applicative
 import Data.Yaml
-import System.IO(FilePath)
+import Data.Aeson.TH
 import NCN.Config.Database
 
 data Config = Config
@@ -15,19 +10,10 @@ data Config = Config
   , database :: DatabaseConfig
   } deriving (Show)
 
-instance FromJSON Config where
-  parseJSON (Object v) =
-    Config <$>
-    v .: "server" <*>
-    v .: "database"
-
 data ServerConfig = ServerConfig
-  { host::String
-  , port::Int
+  { host :: String
+  , port :: Int
   } deriving(Show)
 
-instance FromJSON ServerConfig where
-  parseJSON (Object v) =
-    ServerConfig <$>
-    v .: "host" <*>
-    v .: "port"
+deriveFromJSON defaultOptions ''Config
+deriveFromJSON defaultOptions ''ServerConfig
