@@ -1,36 +1,37 @@
-{-# LANGUAGE OverloadedStrings #-}
-module NCN.Auth(getNewToken, deleteToken, ensureUser) where
+{-# LANGUAGE TemplateHaskell, TypeFamilies, FlexibleInstances, DeriveDataTypeable #-}
+module NCN.Auth where
 
-import Data.Maybe
+import Control.Monad.Reader.Class
+import Control.Monad.State.Class
+import Data.Acid
 import Data.Either
-
-import Data.UUID(toString)
+import Data.Hashable
+import Data.HashMap.Strict as M
+import Data.SafeCopy
+import Data.UUID
 import Data.UUID.V4
-
-import NCN.Database(doAction, tokens)
 import NCN.Types
 
-import Control.Monad.Reader
-import Data.Digest.Pure.SHA(bytestringDigest, sha1)
+type Token = UUID
+deriveSafeCopy 1 'base ''UUID
+type TokenMap = HashMap Token Email
 
-type RDI a = ReaderT DatabaseConfig IO (Either Failure a)
+instance (Hashable a, Eq a, SafeCopy a, SafeCopy b) => SafeCopy (HashMap a b) where
+  getCopy = contain $ fmap fromList safeGet
+  putCopy = contain . safePut . toList
+  version = 1
+  kind = base
 
-hash = bytestringDigest . sha1
+insertToken :: Email -> Token -> Update TokenMap ()
+insertToken email token = get >>= put . insert token email
 
-getNewToken :: String -> RDI Token
-getNewToken email = doAction $ do
-  token <- liftIO newToken
-  insert tokens ["hash" =: hash token, "email" =: email]
-  return token
-  where newToken = toString . nextRandom
+newToken :: IO Token
+newToken = nextRandom
 
-deleteToken :: Token -> RDI ()
-deleteToken token = doAction $ delete tokens (select tokens ["hash" =: hash token])
+deleteToken :: Token -> Update TokenMap ()
+deleteToken token = get >>= put . delete token
 
-ensureUser :: Email -> RDI ()
-ensureUser email = doAction $ do
-  ensureIndex $ (index users [email =: 1]){iUnique = True}
-  insert_ ["email" =: email]
+getEmail :: Token -> Query TokenMap (Maybe Email)
+getEmail token = fmap (M.lookup token) ask
 
-getEmail :: Token -> RDI (Maybe Email)
-getEmail = doAction $ findOne (select tokens ["email" =: email])
+makeAcidic ''TokenMap ['insertToken, 'deleteToken, 'getEmail]
