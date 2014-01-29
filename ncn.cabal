@@ -19,8 +19,12 @@ executable server
 -- other-modules:       
   build-depends:       base ==4.6.*,
                        mtl,
-                       scotty,
+                       conduit,
+                       scotty >=0.6,
+                       bytestring,
+                       text,
+                       aeson,
                        yaml,
                        authenticate,
                        uuid,
-                       mongodb
+                       bson, mongoDB
