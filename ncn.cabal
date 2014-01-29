@@ -19,8 +19,9 @@ executable server
 -- other-modules:       
   build-depends:       base ==4.6.*,
                        mtl,
-                       conduit,
+                       monad-control,
                        scotty >=0.6,
+                       aeson,
                        bytestring,
                        text,
                        aeson,
