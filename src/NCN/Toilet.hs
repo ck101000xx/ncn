@@ -4,20 +4,9 @@ import Control.Applicative
 import Control.Monad.Trans
 import Control.Monad.Trans.Control
 import Database.MongoDB as M
+import NCN.Toilet
 import NCN.Toilet.Types
 import NCN.MongoDB
-
-collection :: Collection
-collection = "toiletLocation"
-
-data ToiletLocation = ToiletLocation
-  { uuid :: ToiletId
-  , location :: Location
-  } deriving (Eq, Show)
-
-instance Entity ToiletLocation where
-  toDocument = (<*>) [("uuid" =:) . uuid,  ("location" =:) . location] . pure
-  fromDocument d = ToiletLocation <$> M.lookup "uuid" d <*> M.lookup "location" d
 
 insert :: (MonadIO m, Applicative m, Functor m) => ToiletLocation -> Action m ()
 insert = M.insert_ collection . toDocument
