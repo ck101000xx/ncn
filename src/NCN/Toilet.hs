@@ -21,7 +21,7 @@ location :: Field
 location = "location"
 
 -- | Create a new Toilet and return its UUID
-newToilet :: Action m ToiletId
+newToilet :: Action m UUID
 newToilet = do
   id <- liftIO $ nextRandom
   insert_ toilets [uuid =: id]

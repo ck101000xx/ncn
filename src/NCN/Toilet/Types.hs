@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings, LambdaCase, DeriveDataTypeable, TemplateHaskell #-}
 module NCN.Toilet.Types
-  ( ToiletId
-  , Location(..)
+  ( Location(..)
   , module U
   ) where
 import Control.Monad
@@ -11,8 +10,6 @@ import Data.Bson as B
 import Data.Text
 import Data.Typeable
 import Data.UUID as U
-
-type ToiletId = U.UUID
 
 data Location = Location
   { longitude :: Double
