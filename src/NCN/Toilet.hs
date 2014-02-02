@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings, FlexibleContexts #-}
-module NCN.Toilet.Location where
+module NCN.Toilet where
 import Control.Applicative
 import Control.Monad.Trans
 import Control.Monad.Trans.Control
