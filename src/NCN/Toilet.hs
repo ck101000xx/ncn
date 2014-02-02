@@ -17,14 +17,14 @@ import NCN.Toilet.Types
 toilets :: Collection
 toilets = "toilets"
 
-uuidIs :: UUID -> Field
-uuidIs = ("uuid" =:)
+uuid :: Label
+uuid = "uuid"
 
-locationIs :: Location -> Field
-locationIs = ("location" =:)
+location :: Label
+location = "location"
 
-nameIs :: Name -> Field
-nameIs = ("name" =:)
+name :: Label
+name = "name"
 
 -- | Query for Toilets within specified circle
 inCircle :: (Select s) => Double -> Location -> s
