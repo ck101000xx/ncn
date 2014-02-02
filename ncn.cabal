@@ -25,6 +25,8 @@ executable server
                        bytestring,
                        text,
                        aeson,
+                       aeson-lens,
+                       lens,
                        yaml,
                        authenticate,
                        uuid,
