@@ -3,6 +3,7 @@ module NCN.Toilet
   ( toilets
   , uuid
   , location
+  , name
   , inCircle
   , module NCN.Toilet.Types
   ) where
@@ -16,13 +17,14 @@ import NCN.Toilet.Types
 toilets :: Collection
 toilets = "toilets"
 
--- | UUID of a toilet
 uuid :: Label
 uuid = "uuid"
 
--- | Location of a toilet
 location :: Label
 location = "location"
+
+name :: Label
+name = "name"
 
 -- | Query for Toilets within specified circle
 inCircle :: (Select s) => Double -> Location -> s
