@@ -1,6 +1,7 @@
 module NCN.MongoDB where
 import Control.Monad.Reader
 import Database.MongoDB as M
+import NCN.Config
 
 type RC = ReaderT MongoDBConfig
 connect :: RC IOE Pipe
