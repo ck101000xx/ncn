@@ -1,5 +1,5 @@
 {-# LANGUAGE TemplateHaskell #-}
-module NCN.Config(Config(..), ServerConfig(..), decodeFile) where
+module NCN.Config(Config(..), ServerConfig(..), MongoDBConfig(..), decodeFile) where
 import Control.Applicative
 import Data.Char
 import Data.Text(unpack)
