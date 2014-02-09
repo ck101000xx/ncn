@@ -1,8 +1,11 @@
 module NCN.MongoDB where
+import Control.Applicative
+import Control.Monad
 import Control.Monad.Error
 import Control.Monad.Reader
 import Control.Monad.Morph
 import Control.Monad.Trans
+import Data.Maybe
 import Database.MongoDB as M
 import NCN.Config
 
@@ -13,8 +16,9 @@ connect = do
   host <- lift $ asks (mongoDBHost . mongodb)
   hoist liftIO $ M.connect host
 
-access :: MonadIO m => AccessMode -> Action m a -> Pipe -> ERC Failure m a
-access m a p = do
-  db <- lift $ asks (mongoDBDatabase . mongodb)
-  hoist lift . ErrorT $ M.access p m db a
+access :: (MonadIO m, Applicative m, Functor m) => AccessMode -> Action m a -> Pipe -> ERC Failure m a
+access mode action pipe = do
+  (db, auth') <- lift . asks $ (liftM2 (,) mongoDBDatabase authAction) . mongodb
+  hoist lift . ErrorT $ M.access pipe mode db (auth' >> action)
+  where authAction = fromMaybe (return True) . liftM2 (liftM2 auth) mongoDBUsername mongoDBPassword
 

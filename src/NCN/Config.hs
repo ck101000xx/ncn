@@ -20,6 +20,8 @@ data ServerConfig = ServerConfig
 data MongoDBConfig = MongoDBConfig
   { mongoDBHost :: Host
   , mongoDBDatabase :: Database
+  , mongoDBUsername :: Maybe Username
+  , mongoDBPassword :: Maybe Password
   } deriving (Show)
 
 instance FromJSON Host where
