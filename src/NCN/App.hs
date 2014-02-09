@@ -14,6 +14,10 @@ import NCN.Toilet
 import Network.HTTP.Types.Status
 import Web.Scotty.Trans as ST
 
+handleIndex ::  ScottyT Text (ReaderT Config IO) ()
+handleIndex = do
+  get "/" $ text "Hello World"
+
 handleToilets :: ScottyT Text (ReaderT Config IO) ()
 handleToilets = do
   post "/toilets" $ do
