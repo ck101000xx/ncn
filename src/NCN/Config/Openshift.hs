@@ -1,4 +1,7 @@
-module NCN.Config.Openshift where
+module NCN.Config.Openshift
+  ( getConfig
+  , module NCN.Config
+  ) where
 import Control.Applicative
 import Data.Text
 import Database.MongoDB

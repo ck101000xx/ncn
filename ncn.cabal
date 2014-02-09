@@ -17,11 +17,11 @@ executable server
   main-is:            Main.hs
   hs-source-dirs:     src
 -- other-modules:       
-  build-depends:       base ==4.6.*,
+  build-depends:       base < 5,
                        mtl,
                        mmorph,
                        monad-control,
-                       scotty >=0.6,
+                       wai, warp, scotty >=0.6,
                        http-types,
                        aeson,
                        bytestring,
