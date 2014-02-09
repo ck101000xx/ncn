@@ -17,6 +17,7 @@ import Web.Scotty.Trans as ST
 handleToilets :: ScottyT Text (ReaderT Config IO) ()
 handleToilets = do
   post "/toilets" $ do
+    allowOrigin
     location' <- Location <$> param "location[latitude]" <*> param "location[longitude]"
     name' <- param "name"
     let doc = [location =: (location' :: Location), name =: (name' :: Name)]
@@ -27,16 +28,21 @@ handleToilets = do
     id <- raiseET connect >>= fmap raiseET (access master run)
     json . toString $ id
   get "/toilets/:uuid" $ do
+    allowOrigin
     u <- param "uuid"
     let run = findOne $ select [uuid =: (u :: UUID)] toilets
     mDoc <- raiseET connect >>= fmap raiseET (access slaveOk run)
     if isNothing mDoc then status status404 else text "Oh Yeah"
   get "/toilets" $ do
+    allowOrigin
     radius <- param "circle[radius]"
     center <- Location <$> param "circle[longitude]" <*> param "circle[latitude]"
     let run = fmap (fmap $ at uuid) $ find (inCircle radius center){project = [uuid =: (1 :: Int)]} >>= rest
     ids <- raiseET connect >>= fmap raiseET (access slaveOk run)
     json . (fmap toString) $ ids
+
+allowOrigin :: ActionT Text (ReaderT Config IO) ()
+allowOrigin = setHeader "Access-Control-Allow-Origin" "*"
 
 raiseET :: (Show e, Monad m) => ErrorT e m a -> ActionT Text m a
 raiseET = lift . runErrorT >=> either raiseShow return
