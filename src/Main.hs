@@ -5,4 +5,4 @@ import NCN.Config.Openshift
 import NCN.Scotty
 
 main :: IO ()
-main = getConfig >>= (runReaderT $ ncnScottyT handleToilets)
+main = getConfig >>= (runReaderT $ ncnScottyT (handleIndex >> handleToilets))
