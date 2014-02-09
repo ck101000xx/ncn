@@ -22,7 +22,7 @@ handleToilets :: ScottyT Text (ReaderT Config IO) ()
 handleToilets = do
   post "/toilets" $ do
     allowOrigin
-    location' <- Location <$> param "location[latitude]" <*> param "location[longitude]"
+    location' <- Location <$> param "location[longitude]" <*> param "location[latitude]"     
     name' <- param "name"
     let doc = [location =: (location' :: Location), name =: (name' :: Name)]
         run = do
