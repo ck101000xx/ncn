@@ -21,7 +21,7 @@ executable server
                        mtl,
                        mmorph,
                        monad-control,
-                       scotty >=0.6,
+                       wai, warp, scotty >=0.6,
                        http-types,
                        aeson,
                        bytestring,
